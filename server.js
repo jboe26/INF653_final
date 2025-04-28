@@ -20,9 +20,18 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/states', statesRoutes); 
 
-// Catch-all route for undefined endpoints
+// Catch-All for 404 Errors
 app.use((req, res) => {
-    res.status(404).json({ error: 'Route not found' });
+    res.status(404); // Set status code to 404
+
+    // Check 'Accept' header for response format
+    if (req.accepts('html')) {
+        res.sendFile(path.join(__dirname, 'views', '404.html')); // Serve an HTML page
+    } else if (req.accepts('json')) {
+        res.json({ error: '404 Not Found' }); // Serve JSON response
+    } else {
+        res.type('txt').send('404 Not Found'); // Serve plain text as fallback
+    }
 });
 
 // Start the server

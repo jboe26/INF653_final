@@ -15,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/jboe26/INF653_final/issues"
   },
+  "engines": {
+    "node": "^16.0.0"
+  },
   "homepage": "https://github.com/jboe26/INF653_final#readme",
   "dependencies": {
     "body-parser": "^2.2.0",

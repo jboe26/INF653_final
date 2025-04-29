@@ -1,13 +1,10 @@
 // Import dependencies
 const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const statesRoutes = require('./routes/statesRoutes'); 
-
-// Load environment variables
 dotenv.config();
-
-const app = express();
+const statesRoutes = require('./routes/statesRoutes'); 
 
 // Middleware
 app.use(express.json()); 
@@ -15,7 +12,7 @@ app.use(express.json());
 // Database connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Error connecting to MongoDB:', err));
+    .catch(err => console.error('Error connecting to MongoDB', err));
 
 // Routes
 app.use('/states', statesRoutes); 

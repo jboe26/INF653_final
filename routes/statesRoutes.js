@@ -1,21 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { getAllStates, getStateByCode, addFunFact, getRandomFunFact, updateFunFact } = require('../controllers/statesController');
+const { 
+    getAllStates, 
+    getStateByCode, 
+    getRandomFunFact, 
+    getCapital, 
+    getNickname, 
+    getPopulation, 
+    getAdmissionDate,
+    addFunFact, updateFunFact, deleteFunFact
+} = require('../controllers/statesController');
 
-// Route to get all states
 router.get('/', getAllStates);
-
-// Route to get specific state information
 router.get('/:state', getStateByCode);
-
-// Route to add fun facts for a specific state
-router.post('/:state/funfact', addFunFact);
-
-// Get random fun fact for a specific state
 router.get('/:state/funfact', getRandomFunFact);
+router.get('/:state/capital', getCapital);
+router.get('/:state/nickname', getNickname);
+router.get('/:state/population', getPopulation);
+router.get('/:state/admission', getAdmissionDate);
+router.post('/states/:state/funfact', addFunFact);
+router.patch('/states/:state/funfact', updateFunFact);
+router.delete('/states/:state/funfact', deleteFunFact);
 
-// Update a existing fun fact
-router.patch('/:state/funfact', updateFunFact);
+
 
 
 module.exports = router;

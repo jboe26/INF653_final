@@ -1,7 +1,6 @@
 const statesData = require('../data/statesData.json'); 
-const State = require('../models/States'); // MongoDB model
+const State = require('../models/States'); 
 
-// Get all states with fun facts
 const getAllStates = async (req, res) => {
     try {
         const states = await Promise.all(statesData.map(async (state) => {
@@ -14,7 +13,6 @@ const getAllStates = async (req, res) => {
     }
 };
 
-// Get specific state information
 const getStateByCode = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const state = statesData.find(s => s.code === stateCode);
@@ -31,7 +29,6 @@ const getStateByCode = async (req, res) => {
     }
 };
 
-// Fun Fact for States
 const addFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const { funfacts } = req.body;
@@ -81,7 +78,7 @@ const updateFunFact = async (req, res) => {
             return res.status(404).json({ error: 'Fun fact not found at the given index.' });
         }
 
-        state.funfacts[index] = funfact; // Update the fun fact
+        state.funfacts[index] = funfact; 
         await state.save();
         res.status(200).json(state);
     } catch (err) {
@@ -89,5 +86,62 @@ const updateFunFact = async (req, res) => {
     }
 };
 
-module.exports = { getAllStates, getStateByCode, addFunFact, getRandomFunFact, updateFunFact };
+const getNickname = (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const state = statesData.find(s => s.code === stateCode);
+
+    if (!state) {
+        return res.status(404).json({ error: 'State not found' });
+    }
+
+    res.json({ state: state.name, nickname: state.nickname });
+};
+
+const getCapital = (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const state = statesData.find(s => s.code === stateCode);
+
+    if (!state) {
+        return res.status(404).json({ error: 'State not found' });
+    }
+
+    res.json({ state: state.name, capital: state.capital });
+};
+
+const getPopulation = (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const state = statesData.find(s => s.code === stateCode);
+
+    if (!state) {
+        return res.status(404).json({ error: 'State not found' });
+    }
+
+    res.json({ state: state.name, population: state.population });
+};
+
+const getAdmissionDate = (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const state = statesData.find(s => s.code === stateCode);
+
+    if (!state) {
+        return res.status(404).json({ error: 'State not found' });
+    }
+
+    res.json({ state: state.name, admission_date: state.admission_date });
+};
+
+
+
+module.exports = { 
+    getAllStates, 
+    getStateByCode, 
+    addFunFact, 
+    getRandomFunFact, 
+    updateFunFact, 
+    deleteFunFact, 
+    getCapital, 
+    getNickname, 
+    getPopulation, 
+    getAdmissionDate 
+};
 

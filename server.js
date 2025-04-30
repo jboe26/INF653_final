@@ -24,7 +24,7 @@ app.use((req, res) => {
 
     // Check 'Accept' header for response format
     if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname, 'views', '404.html')); // Serve an HTML page
+        res.sendFile(path.join(__dirname, 'public', 'views', '404.html')); // Serve an HTML page
     } else if (req.accepts('json')) {
         res.json({ error: '404 Not Found' }); // Serve JSON response
     } else {

@@ -3,10 +3,21 @@ const State = require('../models/States');
 
 const getAllStates = async (req, res) => {
     try {
+        const { contig } = req.query;
+
         const states = await Promise.all(statesData.map(async (state) => {
             const dbState = await State.findOne({ stateCode: state.code });
             return { ...state, funfacts: dbState ? dbState.funfacts : [] };
         }));
+
+        if (contig === 'true') {
+            const contiguousStates = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
+            return res.json(contiguousStates);
+        } else if (contig === 'false') {
+            const nonContiguousStates = states.filter(state => state.code === 'AK' || state.code === 'HI');
+            return res.json(nonContiguousStates);
+        }
+
         res.json(states);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });

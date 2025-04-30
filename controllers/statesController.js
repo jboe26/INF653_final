@@ -1,5 +1,5 @@
-const statesData = require('../data/statesData.json'); 
-const State = require('../models/States'); 
+const statesData = require('../data/statesData.json');
+const State = require('../models/States');
 
 const getAllStates = async (req, res) => {
     try {
@@ -34,7 +34,7 @@ const addFunFact = async (req, res) => {
     const { funfacts } = req.body;
 
     if (!funfacts || !Array.isArray(funfacts)) {
-        return res.status(400).json({ error: 'Invalid data format. Provide an array of fun facts.'})
+        return res.status(400).json({ error: 'Invalid data format. Provide an array of fun facts.' })
     }
     try {
         const state = await State.findOneAndUpdate(
@@ -78,7 +78,7 @@ const updateFunFact = async (req, res) => {
             return res.status(404).json({ error: 'Fun fact not found at the given index.' });
         }
 
-        state.funfacts[index] = funfact; 
+        state.funfacts[index] = funfact;
         await state.save();
         res.status(200).json(state);
     } catch (err) {
@@ -130,18 +130,46 @@ const getAdmissionDate = (req, res) => {
     res.json({ state: state.name, admission_date: state.admission_date });
 };
 
+const deleteFunFact = async (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const { index } = req.body;
+
+    if (index === undefined) {
+        return res.status(400).json({ error: 'Provide the index of the fun fact to delete.' });
+    }
+
+    try {
+        const state = await State.findOne({ stateCode });
+        if (!state || !state.funfacts || state.funfacts.length === 0) {
+            return res.status(404).json({ error: 'No fun facts found for this state.' });
+        }
+
+        if (index - 1 < 0 || index - 1 >= state.funfacts.length) {
+            return res.status(404).json({ error: 'Fun fact not found at the given index.' });
+        }
+
+        state.funfacts.splice(index - 1, 1);
+        await state.save();
+
+        res.status(200).json(state);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
 
 
-module.exports = { 
-    getAllStates, 
-    getStateByCode, 
-    addFunFact, 
-    getRandomFunFact, 
-    updateFunFact, 
-    deleteFunFact, 
-    getCapital, 
-    getNickname, 
-    getPopulation, 
-    getAdmissionDate 
+
+
+module.exports = {
+    getAllStates,
+    getStateByCode,
+    addFunFact,
+    getRandomFunFact,
+    updateFunFact,
+    getCapital,
+    getNickname,
+    getPopulation,
+    getAdmissionDate,
+    deleteFunFact
 };
 

@@ -4,6 +4,7 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
+const path = require('path');
 const statesRoutes = require('./routes/statesRoutes'); 
 
 // Middleware

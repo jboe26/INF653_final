@@ -60,7 +60,7 @@ const getCapital = (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.name, capital: state.capital_city });
+    res.json({ state: state.state, capital: state.capital_city });
 };
 
 // Get nickname
@@ -72,7 +72,7 @@ const getNickname = (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.name, nickname: state.nickname });
+    res.json({ state: state.state, nickname: state.nickname });
 };
 
 // Get population
@@ -84,7 +84,7 @@ const getPopulation = (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.name, population: state.population.toLocaleString() });
+    res.json({ state: state.state, population: state.population.toLocaleString() });
 };
 
 // Get admission date
@@ -96,7 +96,7 @@ const getAdmissionDate = (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.name, admitted: state.admission_date });
+    res.json({ state: state.state, admitted: state.admission_date });
 };
 
 // Add fun fact
@@ -130,13 +130,19 @@ const getRandomFunFact = async (req, res) => {
 
     try {
         const state = await State.findOne({ stateCode });
+        
+        // Get full state name from statesData
+        const stateData = statesData.find(s => s.code === stateCode);
+        const stateName = stateData ? stateData.state : stateCode;
+
         if (!state || !state.funfacts || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Facts found for ${stateName}` });
         }
 
         const randomFact = state.funfacts[Math.floor(Math.random() * state.funfacts.length)];
         res.json({ funfact: randomFact });
     } catch (err) {
+        console.error('Server Error:', err); 
         res.status(500).json({ error: 'Server error' });
     }
 };

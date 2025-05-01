@@ -1,19 +1,23 @@
 // Import dependencies
 const express = require('express');
-const app = express();
+const cors = require('cors'); // Import CORS middleware
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-dotenv.config();
-const statesRoutes = require('./routes/statesRoutes'); 
 const path = require('path');
+const statesRoutes = require('./routes/statesRoutes');
+
+dotenv.config(); // Load environment variables
+
+const app = express(); // Initialize Express app
 
 // Middleware
-app.use(express.json()); 
+app.use(cors()); // Enable CORS for cross-origin requests
+app.use(express.json()); // Parse JSON request body
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Error connecting to MongoDB', err));
+    .catch(err => console.error('Error connecting to MongoDB:', err));
 
 // Routes
 app.use('/states', statesRoutes);

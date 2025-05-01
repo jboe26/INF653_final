@@ -13,7 +13,7 @@ const {
 
 router.get('/', getAllStates);
 router.get('/:state', getStateByCode);
-router.get('/:state/funfacts', getRandomFunFact);
+router.get('/:state/funfact', getRandomFunFact);
 router.get('/:state/capital', getCapital);
 router.get('/:state/nickname', getNickname);
 router.get('/:state/population', getPopulation);

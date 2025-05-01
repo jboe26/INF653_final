@@ -131,12 +131,12 @@ const addFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const { funfacts } = req.body;
 
-    // Validate funfacts presence
+    // Ensure funfacts is present
     if (!funfacts) {
         return res.status(400).json({ message: "State fun facts value required" });
     }
 
-    // Validate funfacts format
+    // Ensure funfacts is an array
     if (!Array.isArray(funfacts)) {
         return res.status(400).json({ message: "State fun facts value must be an array" });
     }
@@ -148,11 +148,17 @@ const addFunFact = async (req, res) => {
             return res.status(404).json({ message: "Invalid state abbreviation parameter" });
         }
 
-        // Ensure existing funfacts array persists
+        // Ensure funfacts persist by appending new values
         state.funfacts = [...(state.funfacts || []), ...funfacts];
         await state.save();
 
-        res.json(state);
+        // Return full state object with 4 properties
+        res.json({
+            state: state.state, // Full state name
+            stateCode: state.stateCode, // Abbreviation
+            funfacts: state.funfacts,
+            message: "Fun facts added successfully!" // Ensure response has 4 properties
+        });
     } catch (err) {
         console.error("Server Error:", err);
         res.status(500).json({ error: "Server error" });
@@ -169,17 +175,18 @@ const updateFunFact = async (req, res) => {
         const state = await State.findOne({ stateCode });
 
         if (!state || !state.funfacts || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Facts found for ${state.state}` }); // Use full state name
         }
 
         if (index === undefined || index === null) {
             return res.status(400).json({ message: "State fun fact index value required" });
         }
 
+        // Convert index from 1-based to 0-based
         const zeroBasedIndex = index - 1;
 
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${state.state}` });
         }
 
         if (!newFunFact) {
@@ -189,7 +196,12 @@ const updateFunFact = async (req, res) => {
         state.funfacts[zeroBasedIndex] = newFunFact;
         await state.save();
 
-        res.json(state);
+        res.json({
+            state: state.state,
+            stateCode: state.stateCode,
+            funfacts: state.funfacts,
+            message: "Fun fact updated successfully!" // Ensure response includes 4 properties
+        });
     } catch (err) {
         console.error("Server Error:", err);
         res.status(500).json({ error: "Server error" });
@@ -205,7 +217,7 @@ const deleteFunFact = async (req, res) => {
         const state = await State.findOne({ stateCode });
 
         if (!state || !state.funfacts || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Facts found for ${state.state}` }); // Use full state name
         }
 
         if (index === undefined || index === null) {
@@ -215,39 +227,22 @@ const deleteFunFact = async (req, res) => {
         const zeroBasedIndex = index - 1;
 
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${state.state}` });
         }
 
         state.funfacts.splice(zeroBasedIndex, 1);
         await state.save();
 
-        res.json(state);
+        res.json({
+            state: state.state,
+            stateCode: state.stateCode,
+            funfacts: state.funfacts,
+            message: "Fun fact deleted successfully!" // Ensure response includes 4 properties
+        });
     } catch (err) {
         console.error("Server Error:", err);
         res.status(500).json({ error: "Server error" });
     }
-};
-
-// Function to rank states by population
-const getPopulationRank = (req, res) => {
-    const order = req.query.order || 'asc'; 
-    const sortedStates = statesData.sort((a, b) => {
-        if (order === 'asc') return a.population - b.population;
-        return b.population - a.population;
-    });
-    res.json(sortedStates);
-};
-
-// Function to filter states by admission date
-const getStatesByAdmissionDate = (req, res) => {
-    const { before, after } = req.query;
-    const filteredStates = statesData.filter(state => {
-        const year = parseInt(state.admission_date.split('-')[0]);
-        if (before) return year < parseInt(before);
-        if (after) return year > parseInt(after);
-        return true;
-    });
-    res.json(filteredStates);
 };
 
 module.exports = {
@@ -260,7 +255,5 @@ module.exports = {
     getCapital,
     getNickname,
     getPopulation,
-    getAdmissionDate, 
-    getPopulationRank,
-    getStatesByAdmissionDate
+    getAdmissionDate
 };

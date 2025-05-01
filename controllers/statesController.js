@@ -99,39 +99,6 @@ const getAdmissionDate = (req, res) => {
     res.json({ state: state.state, admitted: state.admission_date });
 };
 
-// Add fun fact
-const addFunFact = async (req, res) => {
-    const stateCode = req.params.state.toUpperCase();
-    const { funfacts } = req.body;
-
-    // Check if funfacts is provided
-    if (!funfacts) {
-        return res.status(400).json({ message: "State fun facts value required" });
-    }
-
-    // Ensure funfacts is an array
-    if (!Array.isArray(funfacts)) {
-        return res.status(400).json({ message: "State fun facts value must be an array" });
-    }
-
-    try {
-        const state = await State.findOne({ stateCode });
-
-        if (!state) {
-            return res.status(404).json({ message: "Invalid state abbreviation parameter" });
-        }
-
-        // Ensure existing funfacts array stays intact
-        state.funfacts = [...(state.funfacts || []), ...funfacts];
-        await state.save();
-
-        res.json(state); // Return updated state
-    } catch (err) {
-        console.error("Server Error:", err);
-        res.status(500).json({ error: "Server error" });
-    }
-};
-
 // Get random fun fact
 const getRandomFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
@@ -159,6 +126,39 @@ const getRandomFunFact = async (req, res) => {
     }
 };
 
+// Add fun fact
+const addFunFact = async (req, res) => {
+    const stateCode = req.params.state.toUpperCase();
+    const { funfacts } = req.body;
+
+    // Validate funfacts presence
+    if (!funfacts) {
+        return res.status(400).json({ message: "State fun facts value required" });
+    }
+
+    // Validate funfacts format
+    if (!Array.isArray(funfacts)) {
+        return res.status(400).json({ message: "State fun facts value must be an array" });
+    }
+
+    try {
+        const state = await State.findOne({ stateCode });
+
+        if (!state) {
+            return res.status(404).json({ message: "Invalid state abbreviation parameter" });
+        }
+
+        // Ensure existing funfacts array persists
+        state.funfacts = [...(state.funfacts || []), ...funfacts];
+        await state.save();
+
+        res.json(state);
+    } catch (err) {
+        console.error("Server Error:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
 // Update fun fact
 const updateFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
@@ -168,36 +168,30 @@ const updateFunFact = async (req, res) => {
     try {
         const state = await State.findOne({ stateCode });
 
-        // Validate state existence & funfacts array
         if (!state || !state.funfacts || state.funfacts.length === 0) {
             return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
         }
 
-        // Validate index presence
         if (index === undefined || index === null) {
             return res.status(400).json({ message: "State fun fact index value required" });
         }
 
-        // Convert index to 0-based
         const zeroBasedIndex = index - 1;
 
-        // Validate index range
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
             return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
         }
 
-        // Validate fun fact presence
         if (!newFunFact) {
             return res.status(400).json({ message: "State fun fact value required" });
         }
 
-        // Update the fun fact
         state.funfacts[zeroBasedIndex] = newFunFact;
         await state.save();
 
-        res.json(state); // Return updated state data
+        res.json(state);
     } catch (err) {
-        console.error("Server Error:", err); // Debugging log
+        console.error("Server Error:", err);
         res.status(500).json({ error: "Server error" });
     }
 };
@@ -210,31 +204,26 @@ const deleteFunFact = async (req, res) => {
     try {
         const state = await State.findOne({ stateCode });
 
-        // Validate state existence & funfacts array
         if (!state || !state.funfacts || state.funfacts.length === 0) {
             return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
         }
 
-        // Validate index presence
         if (index === undefined || index === null) {
             return res.status(400).json({ message: "State fun fact index value required" });
         }
 
-        // Convert index to 0-based
         const zeroBasedIndex = index - 1;
 
-        // Validate index range
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
             return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
         }
 
-        // Delete the fun fact
         state.funfacts.splice(zeroBasedIndex, 1);
         await state.save();
 
-        res.json(state); // Return updated state data
+        res.json(state);
     } catch (err) {
-        console.error("Server Error:", err); // Debugging log
+        console.error("Server Error:", err);
         res.status(500).json({ error: "Server error" });
     }
 };

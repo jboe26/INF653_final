@@ -197,6 +197,28 @@ const deleteFunFact = async (req, res) => {
     }
 };
 
+// Function to rank states by population
+const getPopulationRank = (req, res) => {
+    const order = req.query.order || 'asc'; 
+    const sortedStates = statesData.sort((a, b) => {
+        if (order === 'asc') return a.population - b.population;
+        return b.population - a.population;
+    });
+    res.json(sortedStates);
+};
+
+// Function to filter states by admission date
+const getStatesByAdmissionDate = (req, res) => {
+    const { before, after } = req.query;
+    const filteredStates = statesData.filter(state => {
+        const year = parseInt(state.admission_date.split('-')[0]);
+        if (before) return year < parseInt(before);
+        if (after) return year > parseInt(after);
+        return true;
+    });
+    res.json(filteredStates);
+};
+
 module.exports = {
     getAllStates,
     getStateByCode,
@@ -207,5 +229,7 @@ module.exports = {
     getCapital,
     getNickname,
     getPopulation,
-    getAdmissionDate
+    getAdmissionDate, 
+    getPopulationRank,
+    getStatesByAdmissionDate
 };

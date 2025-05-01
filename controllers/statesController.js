@@ -60,7 +60,7 @@ const getCapital = (req, res) => {
         return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.name, capital: state.capital });
+    res.json({ state: state.name, capital: state.capital_city });
 };
 
 // Get nickname

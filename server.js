@@ -4,8 +4,8 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
-const path = require('path');
 const statesRoutes = require('./routes/statesRoutes'); 
+const path = require('path');
 
 // Middleware
 app.use(express.json()); 
@@ -16,13 +16,16 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.error('Error connecting to MongoDB', err));
 
 // Routes
-app.use('/states', statesRoutes); 
+app.use('/states', statesRoutes);
+
+// Root Endpoint to Serve HTML
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));
+});
 
 // Catch-All for 404 Errors
 app.use((req, res) => {
     res.status(404); // Set status code to 404
-
-    // Check 'Accept' header for response format
     if (req.accepts('html')) {
         res.sendFile(path.join(__dirname, 'public', 'views', '404.html')); // Serve an HTML page
     } else if (req.accepts('json')) {

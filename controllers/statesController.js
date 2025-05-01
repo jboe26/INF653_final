@@ -23,7 +23,7 @@ const getAllStates = async (req, res) => {
         res.json(filteredStates);
     } catch (err) {
         console.error('Error fetching states:', err);
-        res.status(500).json({ error: 'Server error occurred while fetching states.' });
+        res.status(500).json({ message: 'Server error occurred while fetching states.' });
     }
 };
 
@@ -33,7 +33,7 @@ const getStateByCode = async (req, res) => {
     const state = statesData.find(s => s.code === stateCode);
 
     if (!state) {
-        return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+        return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
     try {
@@ -57,7 +57,7 @@ const getCapital = (req, res) => {
     const state = statesData.find(s => s.code === stateCode);
 
     if (!state) {
-        return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+        return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
     res.json({ state: state.name, capital: state.capital_city });
@@ -69,7 +69,7 @@ const getNickname = (req, res) => {
     const state = statesData.find(s => s.code === stateCode);
 
     if (!state) {
-        return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+        return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
     res.json({ state: state.name, nickname: state.nickname });
@@ -81,7 +81,7 @@ const getPopulation = (req, res) => {
     const state = statesData.find(s => s.code === stateCode);
 
     if (!state) {
-        return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+        return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
     res.json({ state: state.name, population: state.population.toLocaleString() });
@@ -93,7 +93,7 @@ const getAdmissionDate = (req, res) => {
     const state = statesData.find(s => s.code === stateCode);
 
     if (!state) {
-        return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+        return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
     res.json({ state: state.name, admitted: state.admission_date });
@@ -105,14 +105,14 @@ const addFunFact = async (req, res) => {
     const { funfacts } = req.body;
 
     if (!Array.isArray(funfacts) || funfacts.length === 0) {
-        return res.status(400).json({ error: 'Fun facts value must be a non-empty array.' });
+        return res.status(400).json({ message: 'Fun facts value must be a non-empty array.' });
     }
 
     try {
         const state = await State.findOne({ stateCode });
 
         if (!state) {
-            return res.status(404).json({ error: 'Invalid state abbreviation parameter' });
+            return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
         }
 
         state.funfacts = [...state.funfacts, ...funfacts];
@@ -147,7 +147,7 @@ const updateFunFact = async (req, res) => {
     const { index, funfact } = req.body;
 
     if (index === undefined || !funfact) {
-        return res.status(400).json({ error: 'Provide both the index and the new fun fact.' });
+        return res.status(400).json({ message: 'Provide both the index and the new fun fact.' });
     }
 
     try {

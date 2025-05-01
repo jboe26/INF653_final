@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INF653 Final Project</title>
+    <title>INF653 Final Project - States API</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f4f4f9;
+            background-color: #eef2f3;
             color: #333;
+            line-height: 1.6;
         }
         header {
             text-align: center;
             margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            color: #0056b3;
         }
         a {
             color: #0056b3;
@@ -29,24 +34,43 @@
         ul li {
             margin-bottom: 10px;
         }
+        section {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Welcome to the States API</h1>
-        <p>Explore various endpoints of the API to learn more about U.S. states!</p>
+        <p>A Node.js REST API project for exploring U.S. states data.</p>
     </header>
     <section>
-        <h2>Endpoints</h2>
+        <h2>About the Project</h2>
+        <p>The States API allows users to interact with data on all 50 U.S. states, including capitals, populations, admission dates, and fun facts. Use the endpoints below to explore our API.</p>
+    </section>
+    <section>
+        <h2>Available Endpoints</h2>
         <ul>
-            <li><a href="/states">/states</a>: View all states</li>
-            <li><a href="/states?contig=true">/states?contig=true</a>: View contiguous states</li>
-            <li><a href="/states?contig=false">/states?contig=false</a>: View non-contiguous states (AK, HI)</li>
-            <li><a href="/states/KS">/states/:state</a>: View details for Kansas (replace `KS` for other states)</li>
+            <li><a href="/states">/states</a>: View all state data</li>
+            <li><a href="/states?contig=true">/states?contig=true</a>: View contiguous states (excludes AK and HI)</li>
+            <li><a href="/states?contig=false">/states?contig=false</a>: View non-contiguous states (AK and HI)</li>
+            <li><a href="/states/KS">/states/:state</a>: View details for Kansas (replace `KS` with another state)</li>
+            <li><a href="/states/KS/funfact">/states/:state/funfact</a>: View a random fun fact about Kansas (replace `KS` with another state)</li>
+            <li><a href="/states/KS/capital">/states/:state/capital</a>: View the capital of Kansas (replace `KS`)</li>
+            <li><a href="/states/KS/nickname">/states/:state/nickname</a>: View the nickname of Kansas (replace `KS`)</li>
+            <li><a href="/states/KS/population">/states/:state/population</a>: View the population of Kansas (replace `KS`)</li>
+            <li><a href="/states/KS/admission">/states/:state/admission</a>: View Kansas's admission date (replace `KS`)</li>
         </ul>
     </section>
     <footer>
-        <p>Created by Josh for INF653 Final Project</p>
+        <p>INF653 Final Project | Josh Boepple</p>
     </footer>
 </body>
 </html>

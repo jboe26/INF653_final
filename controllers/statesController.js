@@ -59,7 +59,7 @@ const getStateByCode = async (req, res) => {
     }
 };
 
-const addFunFacts = async (req, res) => {
+const addFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const { funfacts } = req.body;
 

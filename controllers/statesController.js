@@ -200,7 +200,7 @@ const updateFunFact = async (req, res) => {
             state: state.state,
             stateCode: state.stateCode,
             funfacts: state.funfacts,
-            message: "Fun fact updated successfully!" // Ensure response includes 4 properties
+            message: "Fun fact updated successfully!" 
         });
     } catch (err) {
         console.error("Server Error:", err);

@@ -18,8 +18,8 @@ router.get('/:state/capital', getCapital);
 router.get('/:state/nickname', getNickname);
 router.get('/:state/population', getPopulation);
 router.get('/:state/admission', getAdmissionDate);
-router.post('/states/:state/funfact', addFunFact);
-router.patch('/states/:state/funfact', updateFunFact);
-router.delete('/states/:state/funfact', deleteFunFact);
+router.post('/states/:state/funfacts', addFunFact);
+router.patch('/states/:state/funfacts', updateFunFact);
+router.delete('/states/:state/funfacts', deleteFunFact);
 
 module.exports = router;

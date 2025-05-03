@@ -12,12 +12,12 @@ const {
 } = require('../controllers/statesController');
 
 router.get('/', getAllStates);
-router.get('/:states', getStateByCode);
-router.get('/:states/funfact', getRandomFunFact);
-router.get('/:states/capital', getCapital);
-router.get('/:states/nickname', getNickname);
-router.get('/:states/population', getPopulation);
-router.get('/:states/admission', getAdmissionDate);
+router.get('/:state', getStateByCode);
+router.get('/:state/funfact', getRandomFunFact);
+router.get('/:state/capital', getCapital);
+router.get('/:state/nickname', getNickname);
+router.get('/:state/population', getPopulation);
+router.get('/:state/admission', getAdmissionDate);
 router.post('/states/:state/funfacts', addFunFact);
 router.patch('/states/:state/funfacts', updateFunFact);
 router.delete('/states/:state/funfacts', deleteFunFact);

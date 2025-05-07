@@ -166,8 +166,6 @@ const addFunFact = async (req, res) => {
 };
 
 // Update fun fact
-const statesData = require("../statesData.json"); // Ensure statesData is imported
-
 const updateFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const index = Number(req.body.index);
@@ -176,15 +174,17 @@ const updateFunFact = async (req, res) => {
     try {
         const state = await State.findOne({ stateCode });
 
-        if (!state || !Array.isArray(state.funfacts) || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` }); 
+        if (!state) {
+            return res.status(404).json({ message: `No state found for ${stateCode}` });
+        }
+        if (!Array.isArray(state.funfacts) || state.funfacts.length === 0) {
+            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
         }
 
         if (isNaN(index) || index <= 0) {
             return res.status(400).json({ message: "State fun fact index value required and must be a number" });
         }
 
-        // Convert index from 1-based to 0-based
         const zeroBasedIndex = index - 1;
 
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
@@ -195,15 +195,13 @@ const updateFunFact = async (req, res) => {
             return res.status(400).json({ message: "State fun fact value required" });
         }
 
-        // Find full state name from statesData.json
         const fullStateName = statesData.find(s => s.code === stateCode)?.name || "Unknown State";
 
-        // Update the fun fact
         state.funfacts[zeroBasedIndex] = newFunFact.trim();
         await state.save();
 
         res.json({
-            state: state.state,
+            state: fullStateName, 
             stateCode: state.stateCode,
             funfacts: state.funfacts,
             message: "Fun fact updated successfully!" 
@@ -217,33 +215,38 @@ const updateFunFact = async (req, res) => {
 // Delete fun fact
 const deleteFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
-    const index = req.body.index;
+    const index = Number(req.body.index);
 
     try {
         const state = await State.findOne({ stateCode });
 
-        if (!state || !state.funfacts || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${state.state}` }); // Use full state name
+        if (!state) {
+            return res.status(404).json({ message: `No state found for ${stateCode}` });
+        }
+        if (!Array.isArray(state.funfacts) || state.funfacts.length === 0) {
+            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` });
         }
 
-        if (index === undefined || index === null) {
-            return res.status(400).json({ message: "State fun fact index value required" });
+        if (isNaN(index) || index <= 0) {
+            return res.status(400).json({ message: "State fun fact index value required and must be a number" });
         }
 
         const zeroBasedIndex = index - 1;
 
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${state.state}` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
         }
+
+        const fullStateName = statesData.find(s => s.code === stateCode)?.name || "Unknown State";
 
         state.funfacts.splice(zeroBasedIndex, 1);
         await state.save();
 
         res.json({
-            state: state.state,
+            state: fullStateName,  
             stateCode: state.stateCode,
             funfacts: state.funfacts,
-            message: "Fun fact deleted successfully!" // Ensure response includes 4 properties
+            message: "Fun fact deleted successfully!" 
         });
     } catch (err) {
         console.error("Server Error:", err);

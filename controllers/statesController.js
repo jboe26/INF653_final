@@ -166,34 +166,40 @@ const addFunFact = async (req, res) => {
 };
 
 // Update fun fact
+const statesData = require("../statesData.json"); // Ensure statesData is imported
+
 const updateFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
-    const index = req.body.index;
+    const index = Number(req.body.index);
     const newFunFact = req.body.funfact;
 
     try {
         const state = await State.findOne({ stateCode });
 
-        if (!state || !state.funfacts || state.funfacts.length === 0) {
-            return res.status(404).json({ message: `No Fun Facts found for ${state.state}` }); // Use full state name
+        if (!state || !Array.isArray(state.funfacts) || state.funfacts.length === 0) {
+            return res.status(404).json({ message: `No Fun Facts found for ${stateCode}` }); 
         }
 
-        if (index === undefined || index === null) {
-            return res.status(400).json({ message: "State fun fact index value required" });
+        if (isNaN(index) || index <= 0) {
+            return res.status(400).json({ message: "State fun fact index value required and must be a number" });
         }
 
         // Convert index from 1-based to 0-based
         const zeroBasedIndex = index - 1;
 
         if (zeroBasedIndex < 0 || zeroBasedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${state.state}` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateCode}` });
         }
 
-        if (!newFunFact) {
+        if (!newFunFact || newFunFact.trim() === "") {
             return res.status(400).json({ message: "State fun fact value required" });
         }
 
-        state.funfacts[zeroBasedIndex] = newFunFact;
+        // Find full state name from statesData.json
+        const fullStateName = statesData.find(s => s.code === stateCode)?.name || "Unknown State";
+
+        // Update the fun fact
+        state.funfacts[zeroBasedIndex] = newFunFact.trim();
         await state.save();
 
         res.json({

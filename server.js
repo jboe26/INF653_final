@@ -22,6 +22,17 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/states', statesRoutes);
 
+// Debugging: List all registered routes
+app._router?.stack?.forEach((layer) => {
+    if (layer.route) {
+        console.log(`Route registered: ${layer.route.path} [${Object.keys(layer.route.methods).join(", ").toUpperCase()}]`);
+    } else if (layer.name === 'router') {
+        console.log(`Middleware detected: ${layer.name}`);
+    }
+});
+
+
+
 // Root Endpoint to Serve HTML
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));

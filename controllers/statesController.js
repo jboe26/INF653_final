@@ -131,12 +131,12 @@ const addFunFact = async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
     const { funfacts } = req.body;
 
-    // Ensure funfacts is present
+    console.log(req.body);
+
     if (!funfacts) {
         return res.status(400).json({ message: "State fun facts value required" });
     }
 
-    // Ensure funfacts is an array
     if (!Array.isArray(funfacts)) {
         return res.status(400).json({ message: "State fun facts value must be an array" });
     }
@@ -148,16 +148,14 @@ const addFunFact = async (req, res) => {
             return res.status(404).json({ message: "Invalid state abbreviation parameter" });
         }
 
-        // Ensure funfacts persist by appending new values
         state.funfacts = [...(state.funfacts || []), ...funfacts];
         await state.save();
 
-        // Return full state object with 4 properties
         res.json({
-            state: state.state, // Full state name
-            stateCode: state.stateCode, // Abbreviation
+            state: state.state,
+            stateCode: state.stateCode,
             funfacts: state.funfacts,
-            message: "Fun facts added successfully!" // Ensure response has 4 properties
+            message: "Fun facts added successfully!"
         });
     } catch (err) {
         console.error("Server Error:", err);
@@ -200,7 +198,7 @@ const updateFunFact = async (req, res) => {
             state: state.state,
             stateCode: state.stateCode,
             funfacts: state.funfacts,
-            message: "Fun fact updated successfully!" 
+            message: "Fun fact updated successfully!"
         });
     } catch (err) {
         console.error("Server Error:", err);
